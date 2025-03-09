@@ -1,0 +1,10 @@
+hdr_test = struct();
+
+point = [65.58711 -145.13650];
+hdr_test.ProjectionStructure = createUTMmstruct(point);
+
+hdr_test.RasterReference = georasterinfo('DEM/tif/p068r014_dem.tif').RasterReference;
+RefMatrix = [0, -30; 30, 0; ]
+
+% test = createUTMprojcrs(point(1), point(2)); % does not produce necessary
+% variables
