@@ -1,4 +1,4 @@
-%example script for running SPIReS with Landsat 8
+%example script for running SPIReS with Landsat 8 
 
 % Bair, E.H., Stillinger, T., and Dozier, J. (2021) 
 % Snow Property Inversion from Remote Sensing (SPIReS), 
@@ -9,19 +9,19 @@
 % unzip('L8example.zip')
 
 % RTP - setup i/o directories
-pr = 'p068r014';
+pr = 'p035r033';
 
 %files
-r0dir=fullfile(pwd,'R0',pr); %snow/ice minima background, p42r34 20201014
+r0dir=fullfile(pwd,'data','R0',pr); %snow/ice minima background, p42r34 20201014
 % rdir=fullfile(pwd,'R'); %snow covered scene, p42r34 20160426
-demfile=fullfile(pwd,'DEM',strcat(pr,'_dem.mat')); % DEM for p42r34 - extraneous 
+demfile=fullfile(pwd,'data','DEM',strcat(pr,'_dem.mat')); % DEM for p42r34 - extraneous 
 %if terrain correction set to false & el_cutoff = 0 m
-Ffile=fullfile(pwd,'Ffile','lut_oli_b1to7_3um_dust.mat'); % look up tables
+Ffile=fullfile(pwd,'data','Ffile','lut_oli_b1to7_3um_dust.mat'); % look up tables
 %Mie-RT calcs for snow for L8 bands 1-7 w/ 3 um dust
-CCfile=fullfile(pwd,'CC',strcat(pr,'_cc.mat')); % canopy cover percent file, NLCD
-WaterMaskfile=fullfile(pwd,'watermask',strcat(pr,'_watermask.mat')); %watermask file, NLCD
-CloudMaskfile=fullfile(pwd,'cloudmask',strcat(pr,'_cloudmask.mat')); %RTP added
-fIcefile=fullfile(pwd,'fice',strcat(pr,'_fice.mat')); %fractional ice, derived from
+CCfile=fullfile(pwd,'data','CC',strcat(pr,'_cc.mat')); % canopy cover percent file, NLCD
+WaterMaskfile=fullfile(pwd,'data','watermask',strcat(pr,'_watermask.mat')); %watermask file, NLCD
+CloudMaskfile=fullfile(pwd,'data','cloudmask',strcat(pr,'_cloudmask.mat')); %RTP added
+fIcefile=fullfile(pwd,'data','fice',strcat(pr,'_fice.mat')); %fractional ice, derived from
 %Randolph Glacier Inventory
 
 %parameters
@@ -34,19 +34,22 @@ dust_thresh=0.90; %RTP added from function description
 el_cutoff=0; %minimum elevation for snow, m, in this case 0 m ignores
 % subset=[1052 3032; 1471 3529]; %bounding box in pixel coordinates for subset 
 % of scene 
-subset=[1000 1500; 1000 1500]; %RTP added - select full tile
+subset=[]; %RTP added - select full tile
 
 % RTP - loop through date dirs for a given pr
 % get the folder contents
-d = dir(fullfile('R',pr));
+d = dir(fullfile('data/R',pr));
 dates = d([d(:).isdir]);
 dates = dates(~ismember({dates(:).name},{'.','..'}));
 
-test = georasterinfo('R0/p042r034/LC08_L2SP_042034_20201014_20201105_02_T1_SR_B1.TIF')
+
+% test_r0 = georasterinfo('R0/p042r034/LC08_L2SP_042034_20201014_20201105_02_T1_SR_B1.TIF');
+% test_r = georasterinfo('R/p042r034/20230209/LC08_L2SP_042034_20230209_20230217_02_T1_SR_B1.TIF');
 
 for i=1:length(dates)
 
     rdir=fullfile(dates(i).folder, dates(i).name);
+    disp(rdir)
   
     %takes 2.09 min running w/ 50 cores
     out=run_spires_landsat(r0dir,rdir,demfile,Ffile,shade,tolval,...
@@ -59,13 +62,13 @@ for i=1:length(dates)
     dust = out.dust;
     grainradius = out.grainradius;
 
-    out_dir = strcat('output/',pr,'/',dates(i).name);
+    out_dir = strcat('data/output/',pr,'/',dates(i).name);
     if not(isfolder(fullfile(pwd,out_dir)))
         mkdir(fullfile(pwd,out_dir));
         addpath(fullfile(pwd, out_dir));
     end
     % save data
-    out_file = fullfile(pwd,out_dir,strcat(pr,'_',dates(i).name, '_spires_out_test.mat'));
+    out_file = fullfile(pwd,out_dir,strcat(pr,'_',dates(i).name, '_spires_out.mat'));
     save(out_file, "fsca", "fsca_raw", "dust", "grainradius");
 end
 
