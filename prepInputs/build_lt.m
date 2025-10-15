@@ -1,7 +1,8 @@
 function F=build_lt(sensor,bands,integrate)
 %input: sensor, string, e.g. 'LandsatOLI' , 'MODIS', 'VIIRS'
 %bands: 1xN vector indicating bands needed from sensor table, e.g. 1:7 for
-%L8 bands 1:7 or 1:13 for HSI bands 1-8,8a,9-12; 1:7 for MODIS MOD09@500m resolution; 
+%L8 bands 1:7 or 1:13 for HSI bands 1-8,8a,9-12; 1:7 for MODIS 
+%MOD09@500m resolution; 
 %or [6:10 12 13 15 16] for VIIRS VNP09@750m resolution
 %integrate: integrate over bandpasses, 1- yes, 0 - no
 % output: gridded interpolant with inputs:
@@ -10,10 +11,9 @@ function F=build_lt(sensor,bands,integrate)
 
 sT=SensorTable(sensor);
 
-% radius=30:10:1200;
-% dust=[0 0.1 1:10:1000];
-% solarZ=0:1:90;
-radius=[30 500 1000];dust=[0 .1 500];solarZ=[0 66 90];
+radius=30:10:1200;
+dust=[0 0.1 1:10:1000];
+solarZ=0:1:90;
 
 lTbl=zeros(length(radius),length(dust),...
     length(solarZ),length(bands));
