@@ -75,7 +75,7 @@ for i=1:length(d)
         %                     0];
         %                 ProjectionStructure.scalefactor=...
         %                     info.CoordinateReferenceSystem.ProjectionParameters.ScaleFactorAtNaturalOrigin;
-        %                 RefMatrix=RasterRef2RefMat(info.RasterReference);
+        RefMatrix=RasterRef2RefMat(info.RasterReference);
         %         end
         %         RasterReference=refmatToMapRasterReference(RefMatrix,size(X));
         if ~isempty(target)
@@ -86,8 +86,7 @@ for i=1:length(d)
     end
 
     if ~isempty(target)
-        %         if any(RefMatrix(:)~=target.RefMatrix(:)) || ...
-        if any(size(X)~=target.RasterReference.RasterSize)
+        if any(RefMatrix(:)~=target.RefMatrix(:)) || any(size(X)~=target.RasterReference.RasterSize)
 
             % reproject if RefMatrices or raster sizes don't match
             %             [X,R.RasterReference]=rasterReprojection(X,RasterReference,...
